@@ -42,6 +42,7 @@ public class ProductServiceImpl implements ProductService{
         existingProduct.setProductName(product.getProductName());
         existingProduct.setProductType(product.getProductType());
         existingProduct.setProductCategory(product.getProductCategory());
+        existingProduct.setProductPrice(product.getProductPrice());
         productRepository.save(existingProduct);
         return existingProduct;
     }
@@ -63,20 +64,20 @@ public class ProductServiceImpl implements ProductService{
         productDetails.setProductType(product.getProductType());
         productDetails.setCategory(product.getProductCategory());
         productDetails.setBasePrice(product.getProductPrice());
-        if(product.getProductCategory()=="Electronics"){
+        if(product.getProductCategory().equals("Electronics")){
             productDetails.setDiscount(productDetails.getBasePrice()*0.15);
-            productDetails.setCharges(new Charges(productDetails.getBasePrice()*0.18,350));
-        }else if(product.getProductCategory()=="Home Appliance"){
+            productDetails.setCharges(new Charges((productDetails.getBasePrice()-productDetails.getDiscount())*0.18,350));
+        }else if(product.getProductCategory().equals("Home Appliance")){
             productDetails.setDiscount(productDetails.getBasePrice()*0.22);
-            productDetails.setCharges(new Charges(productDetails.getBasePrice()*0.24,800));
-        }else if(product.getProductCategory()=="Clothing"){
+            productDetails.setCharges(new Charges((productDetails.getBasePrice()-productDetails.getDiscount())*0.24,800));
+        }else if(product.getProductCategory().equals("Clothing")){
             productDetails.setDiscount(productDetails.getBasePrice()*0.44);
-            productDetails.setCharges(new Charges(productDetails.getBasePrice()*0.12,0));
+            productDetails.setCharges(new Charges((productDetails.getBasePrice()-productDetails.getDiscount())*0.12,0));
         }else{
             productDetails.setDiscount(productDetails.getBasePrice()*0.10);
-            productDetails.setCharges(new Charges(productDetails.getBasePrice()*0.18,300));
+            productDetails.setCharges(new Charges((productDetails.getBasePrice()-productDetails.getDiscount())*0.18,300));
         }
-        productDetails.setFinalPrice(productDetails.getBasePrice()+productDetails.getCharges().getGst()-productDetails.getDiscount()-productDetails.getDiscount());
+        productDetails.setFinalPrice(productDetails.getBasePrice()+productDetails.getCharges().getGst()+productDetails.getCharges().getDelivery()-productDetails.getDiscount());
         return productDetails;
     }
     
