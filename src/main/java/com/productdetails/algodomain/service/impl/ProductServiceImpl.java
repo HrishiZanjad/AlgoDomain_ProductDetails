@@ -10,6 +10,8 @@ import com.productdetails.algodomain.exception.ResourceNotFound;
 import com.productdetails.algodomain.repository.ProductRepository;
 import com.productdetails.algodomain.service.ProductService;
 
+import net.bytebuddy.asm.Advice.Exit;
+
 @Service
 public class ProductServiceImpl implements ProductService{
 
@@ -33,6 +35,16 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public Product geProductById(long Id) {
         return productRepository.findById(Id).orElseThrow(() -> new ResourceNotFound("Product", "Id", Id));
+    }
+
+    @Override
+    public Product updateProduct(Product product, long Id) {
+        Product existingProduct=productRepository.findById(Id).orElseThrow(() -> new ResourceNotFound("Product", "Id", Id));
+        existingProduct.setProductName(product.getProductName());
+        existingProduct.setProductType(product.getProductType());
+        existingProduct.setProductCategory(product.getProductCategory());
+        productRepository.save(existingProduct);
+        return existingProduct;
     }
     
 }
