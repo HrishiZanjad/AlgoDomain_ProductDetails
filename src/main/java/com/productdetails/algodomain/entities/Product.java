@@ -10,19 +10,16 @@ public class Product {
     private String productName;
     private String productType;
     private String productCategory;
-    private int productprice;
-
-    public Product(long productId, String productName, String productType, String productCategory, int productprice) {
+    private int productPrice;
+    public Product(long productId, String productName, String productType, String productCategory, int productPrice) {
         this.productId = productId;
         this.productName = productName;
         this.productType = productType;
         this.productCategory = productCategory;
-        this.productprice = productprice;
+        this.productPrice = productPrice;
     }
-    
     public Product() {
     }
-
     public long getProductId() {
         return productId;
     }
@@ -47,11 +44,10 @@ public class Product {
     public void setProductCategory(String productCategory) {
         this.productCategory = productCategory;
     }
-    public int getProductprice() {
-        return productprice;
+    public int getProductPrice() {
+        return productPrice;
     }
-    public void setProductprice(int productprice) {
-        this.productprice = productprice;
+    public void setProductPrice(int productPrice) {
+        this.productPrice = productPrice;
     }
-    
 }

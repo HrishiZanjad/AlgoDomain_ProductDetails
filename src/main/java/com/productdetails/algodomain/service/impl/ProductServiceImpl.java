@@ -4,13 +4,12 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.productdetails.algodomain.entities.Product;
 import com.productdetails.algodomain.exception.ResourceNotFound;
+import com.productdetails.algodomain.helper.Charges;
+import com.productdetails.algodomain.helper.ProductDetails;
 import com.productdetails.algodomain.repository.ProductRepository;
 import com.productdetails.algodomain.service.ProductService;
-
-import net.bytebuddy.asm.Advice.Exit;
 
 @Service
 public class ProductServiceImpl implements ProductService{
@@ -45,6 +44,40 @@ public class ProductServiceImpl implements ProductService{
         existingProduct.setProductCategory(product.getProductCategory());
         productRepository.save(existingProduct);
         return existingProduct;
+    }
+
+    @Override
+    public void deleteProduct(long Id) {
+
+        productRepository.findById(Id).orElseThrow(() -> new ResourceNotFound("Product", "Id", Id));
+
+        productRepository.deleteById(Id);        
+    }
+
+    @Override
+    public ProductDetails getProducts(long Id) {
+        Product product=productRepository.findById(Id).orElseThrow(() -> new ResourceNotFound("Product", "Id", Id));
+        ProductDetails productDetails=new ProductDetails();
+        productDetails.setProductId(product.getProductId());
+        productDetails.setName(product.getProductName());
+        productDetails.setProductType(product.getProductType());
+        productDetails.setCategory(product.getProductCategory());
+        productDetails.setBasePrice(product.getProductPrice());
+        if(product.getProductCategory()=="Electronics"){
+            productDetails.setDiscount(productDetails.getBasePrice()*0.15);
+            productDetails.setCharges(new Charges(productDetails.getBasePrice()*0.18,350));
+        }else if(product.getProductCategory()=="Home Appliance"){
+            productDetails.setDiscount(productDetails.getBasePrice()*0.22);
+            productDetails.setCharges(new Charges(productDetails.getBasePrice()*0.24,800));
+        }else if(product.getProductCategory()=="Clothing"){
+            productDetails.setDiscount(productDetails.getBasePrice()*0.44);
+            productDetails.setCharges(new Charges(productDetails.getBasePrice()*0.12,0));
+        }else{
+            productDetails.setDiscount(productDetails.getBasePrice()*0.10);
+            productDetails.setCharges(new Charges(productDetails.getBasePrice()*0.18,300));
+        }
+        productDetails.setFinalPrice(productDetails.getBasePrice()+productDetails.getCharges().getGst()-productDetails.getDiscount()-productDetails.getDiscount());
+        return productDetails;
     }
     
 }
